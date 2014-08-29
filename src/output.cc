@@ -1,24 +1,22 @@
 /* Output routines.
-   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002-2004, 2006-2007, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
    This file is part of GNU GPERF.
 
-   GNU GPERF is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
-   GNU GPERF is distributed in the hope that it will be useful,
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; see the file COPYING.
-   If not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Specification. */
 #include "output.h"
@@ -84,9 +82,9 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
                 const char *verbatim_code, const char *verbatim_code_end,
                 unsigned int verbatim_code_lineno, bool charset_dependent,
                 int total_keys, int max_key_len, int min_key_len,
-                const Positions& positions, const unsigned int *alpha_inc,
-                int total_duplicates, unsigned int alpha_size,
-                const int *asso_values)
+                bool hash_includes_len, const Positions& positions,
+                const unsigned int *alpha_inc, int total_duplicates,
+                unsigned int alpha_size, const int *asso_values)
   : _head (head), _struct_decl (struct_decl),
     _struct_decl_lineno (struct_decl_lineno), _return_type (return_type),
     _struct_tag (struct_tag),
@@ -99,6 +97,7 @@ Output::Output (KeywordExt_List *head, const char *struct_decl,
     _charset_dependent (charset_dependent),
     _total_keys (total_keys),
     _max_key_len (max_key_len), _min_key_len (min_key_len),
+    _hash_includes_len (hash_includes_len),
     _key_positions (positions), _alpha_inc (alpha_inc),
     _total_duplicates (total_duplicates), _alpha_size (alpha_size),
     _asso_values (asso_values)
@@ -757,7 +756,7 @@ Output::output_hash_function () const
   if (/* The function does not use the 'str' argument?  */
       _key_positions.get_size() == 0
       || /* The function uses 'str', but not the 'len' argument?  */
-         (option[NOLENGTH]
+         (!_hash_includes_len
           && _key_positions[0] < _min_key_len
           && _key_positions[_key_positions.get_size() - 1] != Positions::LASTCHAR))
     /* Pacify lint.  */
@@ -819,7 +818,7 @@ Output::output_hash_function () const
     {
       /* Trivial case: No key positions at all.  */
       printf ("  return %s;\n",
-              option[NOLENGTH] ? "0" : "len");
+              _hash_includes_len ? "len" : "0");
     }
   else
     {
@@ -840,7 +839,7 @@ Output::output_hash_function () const
              contain 'unsigned char's or 'unsigned short's.  */
 
           printf ("  return %s",
-                  option[NOLENGTH] ? "" : "len + ");
+                  _hash_includes_len ? "len + " : "");
 
           if (_key_positions.get_size() == 2
               && _key_positions[0] == 0
@@ -875,8 +874,8 @@ Output::output_hash_function () const
                   "  switch (%s)\n"
                   "    {\n"
                   "      default:\n",
-                  option[NOLENGTH] ? "0" : "len",
-                  option[NOLENGTH] ? "len" : "hval");
+                  _hash_includes_len ? "len" : "0",
+                  _hash_includes_len ? "hval" : "len");
 
           while (key_pos != Positions::LASTCHAR && key_pos >= _max_key_len)
             if ((key_pos = iter.next ()) == PositionIterator::EOS)
@@ -1886,10 +1885,16 @@ Output::output_lookup_function () const
   if (option[KRC] | option[C] | option[ANSIC])
     /* GCC 4.3 and above with -std=c99 or -std=gnu99 implements ISO C99
        inline semantics, unless -fgnu89-inline is used.  It defines a macro
-       __GNUC_STDC_INLINE__ to indicate this situation.  */
+       __GNUC_STDC_INLINE__ to indicate this situation or a macro
+       __GNUC_GNU_INLINE__ to indicate the opposite situation.
+       GCC 4.2 with -std=c99 or -std=gnu99 implements the GNU C inline
+       semantics but warns, unless -fgnu89-inline is used:
+         warning: C99 inline functions are not supported; using GNU89
+         warning: to disable this warning use -fgnu89-inline or the gnu_inline function attribute
+       It defines a macro __GNUC_GNU_INLINE__ to indicate this situation.  */
     printf ("#ifdef __GNUC__\n"
             "__inline\n"
-            "#ifdef __GNUC_STDC_INLINE__\n"
+            "#if defined __GNUC_STDC_INLINE__ || defined __GNUC_GNU_INLINE__\n"
             "__attribute__ ((__gnu_inline__))\n"
             "#endif\n"
             "#endif\n");

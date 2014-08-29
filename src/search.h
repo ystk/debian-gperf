@@ -2,26 +2,24 @@
 
 /* Search algorithm.
 
-   Copyright (C) 1989-1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1998, 2000, 2002, 2009 Free Software Foundation, Inc.
    Written by Douglas C. Schmidt <schmidt@ics.uci.edu>
    and Bruno Haible <bruno@clisp.org>.
 
    This file is part of GNU GPERF.
 
-   GNU GPERF is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
-   GNU GPERF is distributed in the hope that it will be useful,
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; see the file COPYING.
-   If not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef search_h
 #define search_h 1
@@ -114,6 +112,9 @@ public:
 
   /* Minimum length of the shortest keyword.  */
   int                   _min_key_len;
+
+  /* Whether the hash function includes the length.  */
+  bool                  _hash_includes_len;
 
   /* User-specified or computed key positions.  */
   Positions             _key_positions;

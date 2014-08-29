@@ -1,0 +1,35 @@
+From: Hilko Bengen <bengen@debian.org>
+Date: Sun, 28 Jul 2013 14:33:25 +0200
+Subject: Fix syntex error in Texinfo documentation, only build Info and HTML.
+
+---
+ doc/Makefile.in | 2 +-
+ doc/gperf.texi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/doc/Makefile.in b/doc/Makefile.in
+index fc06c15..471417f 100644
+--- a/doc/Makefile.in
++++ b/doc/Makefile.in
+@@ -63,7 +63,7 @@ SHELL = /bin/sh
+ 
+ VPATH = $(srcdir)
+ 
+-all : info ps pdf html
++all : info html
+ 
+ 
+ info : $(srcdir)/gperf.info
+diff --git a/doc/gperf.texi b/doc/gperf.texi
+index 0bb42b8..646dc28 100644
+--- a/doc/gperf.texi
++++ b/doc/gperf.texi
+@@ -1128,7 +1128,7 @@ hash table.  Default name is @samp{wordlist}.  This option permits the
+ use of two hash tables in the same file, even when the option @samp{-G}
+ (or, equivalently, the @samp{%global-table} declaration) is given.
+ 
+-@itemx --length-table-name=@var{length-table-array-name}
++@item --length-table-name=@var{length-table-array-name}
+ @cindex Array name
+ Allows you to specify the name for the generated array containing the
+ length table.  Default name is @samp{lengthtable}.  This option permits the

@@ -1,3 +1,31 @@
+gperf (3.0.4-1) unstable; urgency=low
+
+  * New upstream release (Closes: #698414). The license has been changed
+    to GPL3+.
+  * Adopted and modernized package (Closes: #717187)
+    - Bumped Debhelper compat level to 9; cleaned up debian/rules
+    - Bumped Standards-Version
+    - Source format 3.0 (quilt)
+    - Added watch file
+    - Fixed doc-base entry
+    - Don't use dh-buildinfo
+    - Converted debian/copyright to DEP-5 format
+  * Added patch to fix Texinfo syntax error, only build Info and HTML
+  * Marked package Multi-Arch: foreign (Closes: #718328)
+
+ -- Hilko Bengen <bengen@debian.org>  Tue, 30 Jul 2013 23:46:28 +0200
+
+gperf (3.0.3-2) unstable; urgency=high
+
+  * QA upload.
+  * Package orphaned.
+  * Delete debian/postinst, dropping unconditional invocation of install-info.
+    Closes: #642513
+  * Upload with minimal changes and urgency=high, because the removal of
+    the install-info wrapper in dpkg (1.17.0) made gperf uninstallable.
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 28 Jul 2013 08:34:27 +0200
+
 gperf (3.0.3-1) unstable; urgency=low
 
   * New upstream release

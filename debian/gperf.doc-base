@@ -2,7 +2,7 @@ Document: gperf
 Title: User's Guide to gperf
 Author: Douglas C. Schmidt, Bruno Haible
 Abstract: GNU Perfect Hash Function Generator
-Section: Apps/Programming
+Section: Programming
 
 Format: info
 Index: /usr/share/info/gperf.info.gz
