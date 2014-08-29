@@ -6,20 +6,18 @@
 #
 # This file is part of GNU GPERF.
 #
-# GNU GPERF is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
 #
-# GNU GPERF is distributed in the hope that it will be useful,
+# This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; see the file COPYING.
-# If not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #### Start of system configuration section. ####
 
@@ -51,7 +49,7 @@ TEXI2DVI = texi2dvi
 DVIPS = dvips -D600
 TEXI2PDF = texi2pdf
 MAKEINFO = LANG= LC_MESSAGES= LC_ALL= LANGUAGE= makeinfo
-TEXI2HTML = texi2html
+TEXI2HTML = perl $(srcdir)/texi2html
 
 # Programs used by "make install":
 INSTALL = @INSTALL@
@@ -70,13 +68,13 @@ all : info ps pdf html
 
 info : $(srcdir)/gperf.info
 
-$(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.info : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(MAKEINFO) --no-split gperf.texi
 
 
 dvi : $(srcdir)/gperf.dvi
 
-$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.dvi : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 	cd $(srcdir) && $(TEXI2DVI) gperf.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
@@ -90,7 +88,7 @@ $(srcdir)/gperf.ps : $(srcdir)/gperf.dvi
 
 pdf : $(srcdir)/gperf.pdf
 
-$(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+$(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
 	cd $(srcdir) && $(TEXI2PDF) gperf.texi
 	cd $(srcdir) && $(RM) gperf.aux gperf.toc gperf.cp gperf.fn gperf.ky gperf.pg gperf.tp gperf.vr gperf.log gperf.cps
@@ -98,12 +96,12 @@ $(srcdir)/gperf.pdf : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
 
 html : gperf.html gperf_toc.html
 
-gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
-	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -monolithic gperf.texi
+gperf.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
+	cd $(srcdir) && $(TEXI2HTML) -number -monolithic gperf.texi
 
-gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl.texinfo
+gperf_toc.html : $(srcdir)/gperf.texi $(srcdir)/gpl-3.0.texi
 	cd $(srcdir) && $(RM) gperf_*.html
-	cd $(srcdir) && $(TEXI2HTML) -expandinfo -number -split_chapter gperf.texi
+	cd $(srcdir) && $(TEXI2HTML) -number -split_chapter gperf.texi
 
 
 install : all force
